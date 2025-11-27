@@ -1,31 +1,31 @@
 type ModalProps = {
-    message: string;
-    onCancel: () => void;
-    onConfirm: () => void;
+  message: string;
+  onCancel: () => void;
+  onConfirm: () => void;
 };
 
-const Modal = ({ message, onCancel, onConfirm }: ModalProps) => {
-    return (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full">
-                <p className="text-lg text-gray-800 mb-6 text-center">{message}</p>
-                <div className="flex justify-center gap-4">
-                    <button
-                        onClick={onCancel}
-                        className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded-lg transition duration-200 w-full sm:w-auto"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        onClick={onConfirm}
-                        className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200 w-full sm:w-auto"
-                    >
-                        Confirmar
-                    </button>
-                </div>
-            </div>
+export function Modal({ message, onCancel, onConfirm }: ModalProps) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm animate-scaleIn">
+        <p className="text-gray-800 text-center text-lg mb-8">{message}</p>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            onClick={onCancel}
+            className="w-full sm:w-auto px-6 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300 text-gray-800 transition"
+          >
+            Cancelar
+          </button>
+
+          <button
+            onClick={onConfirm}
+            className="w-full sm:w-auto px-6 py-2 rounded-lg font-semibold bg-red-600 hover:bg-red-700 text-white transition"
+          >
+            Confirmar
+          </button>
         </div>
-    );
-};
-
-export { Modal };
+      </div>
+    </div>
+  );
+}
