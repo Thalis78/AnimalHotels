@@ -8,11 +8,16 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (method === "POST") {
-    const { nome, email, telefone } = req.body;
+    const { nome, email, telefone, senha } = req.body;
     if (!nome || !email || !telefone) {
       return res.status(400).json({ error: "Campos obrigatórios" });
     }
-    const newTutor = tutorController.createTutor({ nome, email, telefone });
+    const newTutor = tutorController.createTutor({
+      nome,
+      email,
+      telefone,
+      senha,
+    });
     return res.status(201).json(newTutor);
   }
 
