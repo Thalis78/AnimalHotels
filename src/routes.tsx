@@ -19,6 +19,8 @@ export function AppRoutes() {
         <Route path="/animais" element={<ListagemAnimais />} />
         <Route path="/cadastro-animal" element={<CadastroAnimal />} />
         <Route path="/editar-animal/:id" element={<EditarAnimal />} />
+
+        <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
