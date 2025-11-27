@@ -3,6 +3,7 @@ export type Tutor = {
   nome: string;
   email: string;
   telefone: string;
+  senha: string;
 };
 
 declare global {
@@ -17,5 +18,6 @@ export const tutors: Tutor[] =
       nome: "Lucas Show Morais",
       email: "lucashowmorais@gmail.com",
       telefone: "11999999999",
+      senha: "123456",
     },
   ]);
