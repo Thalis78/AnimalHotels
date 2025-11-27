@@ -1,5 +1,5 @@
-import { tutors } from "../models/tutorModel.ts";
-import type { Tutor } from "../models/tutorModel.ts";
+import { tutors } from "../models/tutorModel.js";
+import type { Tutor } from "../models/tutorModel.js";
 
 export const tutorController = {
   getTutores(): Tutor[] {

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { tutorController } from "../tutor/controllers/tutorControllers.ts";
+import { tutorController } from "./controllers/tutorControllers.js";
 export default function handler(req: VercelRequest, res: VercelResponse) {
   const method = req.method;
 
