@@ -1,19 +1,23 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { animalController } from "../controllers/animalControllers.js";
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const method = req.method;
 
   try {
     if (method === "GET") {
-      const tutorId = Number(req.query.tutor);
+      const id = req.query.id ? Number(req.query.id) : null;
 
-      if (tutorId) {
-        const animaisPorTutor = animalController.getAnimaisPorTutor(tutorId);
-        return res.status(200).json(animaisPorTutor);
+      if (id) {
+        const animal = await animalController.getAnimalById(id);
+        if (!animal) {
+          return res.status(404).json({ error: "Animal não encontrado" });
+        }
+        return res.status(200).json(animal);
       }
 
-      return res.status(200).json(animalController.getAnimais());
+      const animais = await animalController.getAnimais();
+      return res.status(200).json(animais);
     }
 
     if (method === "POST") {
@@ -23,7 +27,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(400).json({ error: "Campos obrigatórios" });
       }
 
-      const newAnimal = animalController.createAnimal({
+      const newAnimal = await animalController.createAnimal({
         nome,
         especie,
         raca,
