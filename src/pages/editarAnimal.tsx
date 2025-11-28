@@ -19,32 +19,38 @@ export default function EditarAnimal() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTutorData = async () => {
-      setIsLoadingData(true);
-      try {
-        const response = await fetch(`/api/animal?id=${id}`);
-        const data = await response.json();
+    const token = localStorage.getItem("token");
 
-        if (response.ok) {
-          setNome(data.nome);
-          setEspecie(data.especie);
-          setRaca(data.raca);
-          setIdade(data.idade);
-        } else {
-          setToastMessage(data.error || "Erro ao carregar os dados do animal.");
-          setToastVariant("error");
-        }
-      } catch (err) {
-        console.error("Erro ao buscar dados:", err);
-        setToastMessage("Erro ao carregar os dados. Tente novamente.");
+    if (!token) {
+      navigate("/login");
+    } else {
+      fetchAnimalData();
+    }
+  }, [navigate]);
+
+  const fetchAnimalData = async () => {
+    setIsLoadingData(true);
+    try {
+      const response = await fetch(`/api/animal?id=${id}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setNome(data.nome);
+        setEspecie(data.especie);
+        setRaca(data.raca);
+        setIdade(data.idade);
+      } else {
+        setToastMessage(data.error || "Erro ao carregar os dados do animal.");
         setToastVariant("error");
-      } finally {
-        setIsLoadingData(false);
       }
-    };
-
-    fetchTutorData();
-  }, [id]);
+    } catch (err) {
+      console.error("Erro ao buscar dados:", err);
+      setToastMessage("Erro ao carregar os dados. Tente novamente.");
+      setToastVariant("error");
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
 
   const handleSalvar = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,11 +62,11 @@ export default function EditarAnimal() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          nome, 
-          especie, 
-          raca, 
-          idade: Number(idade)
+        body: JSON.stringify({
+          nome,
+          especie,
+          raca,
+          idade: Number(idade),
         }),
       });
 
