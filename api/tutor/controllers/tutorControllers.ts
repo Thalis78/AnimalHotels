@@ -6,6 +6,11 @@ export const tutorController = {
     return tutors;
   },
 
+  getTutorById(id: number): Tutor | null {
+    const tutor = tutors.find((t) => t.id === id);
+    return tutor || null;
+  },
+
   createTutor(data: Omit<Tutor, "id">): Tutor {
     const newTutor: Tutor = {
       id: tutors.length + 1,
