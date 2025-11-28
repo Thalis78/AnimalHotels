@@ -1,0 +1,12 @@
+{
+  "tutors": [
+    {
+      "id": 1,
+      "nome": "Thalisson Show",
+      "email": "thalisson.show@gmail.com",
+      "telefone": "11988887777",
+      "senha": "123"
+    }
+  ],
+  "animais": []
+}
