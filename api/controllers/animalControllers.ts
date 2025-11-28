@@ -1,51 +1,93 @@
-import { tutors } from "../models/tutorModel.js";
-import { animais } from "../models/animalModel.js";
+import { getDataFromFile, saveDataToFile } from "../fileService.js";
 import type { Animal } from "../models/animalModel.js";
 
 export const animalController = {
   getAnimais(): Animal[] {
-    return animais;
+    try {
+      const data = getDataFromFile();
+      return data.animais;
+    } catch (error) {
+      console.error("Erro ao obter animais:", error);
+      return [];
+    }
   },
 
   getAnimaisPorTutor(tutorId: number): Animal[] {
-    return animais.filter((animal) => animal.tutor === tutorId);
+    try {
+      const data = getDataFromFile();
+      return data.animais.filter((animal) => animal.tutor === tutorId);
+    } catch (error) {
+      console.error("Erro ao obter animais por tutor:", error);
+      return [];
+    }
   },
 
   createAnimal(data: Omit<Animal, "id">): Animal | null {
-    const newAnimal: Animal = {
-      id: animais.length + 1,
-      ...data,
-    };
+    try {
+      const dataFromFile = getDataFromFile();
 
-    const tutor = tutors.find((t) => t.id === data.tutor);
+      const tutor = dataFromFile.tutors.find((t) => t.id === data.tutor);
+      if (!tutor) return null;
 
-    if (!tutor) return null;
+      const newId =
+        dataFromFile.animais.length > 0
+          ? Math.max(...dataFromFile.animais.map((a) => a.id)) + 1
+          : 1;
 
-    animais.push(newAnimal);
-    return newAnimal;
+      const newAnimal: Animal = {
+        id: newId,
+        ...data,
+      };
+
+      dataFromFile.animais.push(newAnimal);
+
+      saveDataToFile(dataFromFile);
+
+      return newAnimal;
+    } catch (error) {
+      console.error("Erro ao criar animal:", error);
+      return null;
+    }
   },
 
   updateAnimal(id: number, data: Partial<Animal>): Animal | null {
-    const animal = animais.find((a) => a.id === id);
+    try {
+      const dataFromFile = getDataFromFile();
+      const animal = dataFromFile.animais.find((a) => a.id === id);
 
-    if (!animal) return null;
+      if (!animal) return null;
 
-    if (data.tutor) {
-      const tutor = tutors.find((t) => t.id === data.tutor);
+      if (data.tutor) {
+        const tutor = dataFromFile.tutors.find((t) => t.id === data.tutor);
+        if (!tutor) return null;
+      }
 
-      if (!tutor) return null;
+      Object.assign(animal, data);
+
+      saveDataToFile(dataFromFile);
+
+      return animal;
+    } catch (error) {
+      console.error("Erro ao atualizar animal:", error);
+      return null;
     }
-
-    Object.assign(animal, data);
-    return animal;
   },
 
   deleteAnimal(id: number): boolean {
-    const index = animais.findIndex((a) => a.id === id);
+    try {
+      const dataFromFile = getDataFromFile();
+      const index = dataFromFile.animais.findIndex((a) => a.id === id);
 
-    if (index === -1) return false;
+      if (index === -1) return false;
 
-    animais.splice(index, 1);
-    return true;
+      dataFromFile.animais.splice(index, 1);
+
+      saveDataToFile(dataFromFile);
+
+      return true;
+    } catch (error) {
+      console.error("Erro ao deletar animal:", error);
+      return false;
+    }
   },
 };
