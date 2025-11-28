@@ -1,39 +1,59 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { tutorController } from "./controllers/tutorControllers.js";
-export default function handler(req: VercelRequest, res: VercelResponse) {
+import { tutorController } from "../controllers/tutorControllers.js";
+
+export const validateLogin = async (email: string, senha: string) => {
+  try {
+    const tutors = await tutorController.getTutores();
+    return tutors.find(
+      (tutor) => tutor.email === email && tutor.senha === senha
+    );
+  } catch (err) {
+    console.error("Erro ao validar login:", err);
+    throw new Error("Erro ao tentar validar o login");
+  }
+};
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const method = req.method;
 
-  if (method === "GET") {
-    return res.status(200).json(tutorController.getTutores());
-  }
+  try {
+    if (method === "GET") {
+      const id = req.query.id ? Number(req.query.id) : null;
 
-  if (method === "POST") {
-    const { nome, email, telefone, senha } = req.body;
-    if (!nome || !email || !telefone) {
-      return res.status(400).json({ error: "Campos obrigatórios" });
+      if (id) {
+        const tutor = await tutorController.getTutorById(id);
+        if (!tutor) {
+          return res.status(404).json({ error: "Tutor não encontrado" });
+        }
+        return res.status(200).json(tutor);
+      }
+
+      const tutors = await tutorController.getTutores();
+      return res.status(200).json(tutors);
     }
-    const newTutor = tutorController.createTutor({
-      nome,
-      email,
-      telefone,
-      senha,
-    });
-    return res.status(201).json(newTutor);
-  }
 
-  if (method === "PUT") {
-    const id = Number(req.query.id);
-    const tutor = tutorController.updateTutor(id, req.body);
-    if (!tutor) return res.status(404).json({ error: "Tutor não encontrado" });
-    return res.status(200).json(tutor);
-  }
+    if (method === "POST") {
+      const { nome, email, telefone, senha } = req.body;
 
-  if (method === "DELETE") {
-    const id = Number(req.query.id);
-    const ok = tutorController.deleteTutor(id);
-    if (!ok) return res.status(404).json({ error: "Tutor não encontrado" });
-    if (!ok) return res.status(204).send("No content");
-  }
+      if (!nome || !email || !telefone || !senha) {
+        return res.status(400).json({
+          error: "Campos obrigatórios: nome, email, telefone e senha",
+        });
+      }
 
-  return res.status(405).json({ error: "Método não permitido" });
+      const newTutor = await tutorController.createTutor({
+        nome,
+        email,
+        telefone,
+        senha,
+      });
+
+      return res.status(201).json(newTutor);
+    }
+
+    return res.status(405).json({ error: "Método não permitido" });
+  } catch (error) {
+    console.error("Erro no handler da API:", error);
+    return res.status(500).json({ error: "Erro interno no servidor" });
+  }
 }
