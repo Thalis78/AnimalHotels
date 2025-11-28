@@ -22,6 +22,17 @@ export const animalController = {
     }
   },
 
+  getAnimalById(id: number): Animal | null {
+      try {
+        const data = getDataFromFile();
+        const animal = data.animais.find((a) => a.id === id);
+        return animal || null;
+      } catch (error) {
+        console.error("Erro ao obter animal por ID:", error);
+        return null;
+      }
+    },
+
   createAnimal(data: Omit<Animal, "id">): Animal | null {
     try {
       const dataFromFile = getDataFromFile();

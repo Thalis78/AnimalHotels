@@ -8,5 +8,14 @@
       "senha": "123"
     }
   ],
-  "animais": []
+  "animais": [
+    {
+      "id": 1,
+      "nome": "Bob",
+      "especie": "Cachorro",
+      "raca": "Pit bull",
+      "idade": 3,
+      "tutor": 1
+    }
+  ]
 }
