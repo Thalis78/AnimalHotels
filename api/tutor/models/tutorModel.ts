@@ -16,8 +16,8 @@ export const tutors: Tutor[] =
     {
       id: 1,
       nome: "Lucas Show Morais",
-      email: "lucashowmorais@gmail.com",
+      email: "1@gmail.com",
       telefone: "11999999999",
-      senha: "123456",
+      senha: "1",
     },
   ]);
