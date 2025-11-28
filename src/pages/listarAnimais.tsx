@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Toast } from "../ui/toast";
 import Spinner from "../ui/spinner";
 import { Animal } from "../../api/models/animalModel";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Modal } from "../ui/modal";
 
 export default function ListagemAnimais() {
@@ -17,8 +17,16 @@ export default function ListagemAnimais() {
   const [animalIdToDelete, setAnimalIdToDelete] = useState<number | null>(null);
 
   const tutorId = localStorage.getItem("id");
+  const token = localStorage.getItem("token");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     if (tutorId) {
       fetchAnimais(tutorId);
     } else {
@@ -26,7 +34,7 @@ export default function ListagemAnimais() {
       setToastVariant("error");
       setIsLoading(false);
     }
-  }, [tutorId]);
+  }, [token, tutorId, navigate]);
 
   const fetchAnimais = async (tutorId: string) => {
     setIsLoading(true);
@@ -66,8 +74,8 @@ export default function ListagemAnimais() {
         if (response.ok) {
           setToastMessage("Animal excluído com sucesso.");
           setToastVariant("success");
-          setAnimais(
-            animais.filter((animal) => animal.id !== animalIdToDelete)
+          setAnimais((prevAnimais) =>
+            prevAnimais.filter((animal) => animal.id !== animalIdToDelete)
           );
         } else {
           const data = await response.json();
@@ -93,15 +101,15 @@ export default function ListagemAnimais() {
     <div className="flex flex-col items-center justify-center min-h-screen relative">
       {isLoading && <Spinner />}
 
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-3xl z-10">
-        <h1 className="text-2xl font-semibold text-center mb-6">
+      <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-3xl z-10">
+        <h1 className="text-3xl font-semibold text-center mb-6 text-gray-800">
           Listagem de Animais
         </h1>
 
         <div className="mb-4 text-center">
           <Link
             to="/cadastro-animal"
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200"
+            className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300"
           >
             Cadastrar Novo Animal
           </Link>
@@ -112,42 +120,49 @@ export default function ListagemAnimais() {
             Você não tem animais cadastrados.
           </p>
         ) : (
-          <ul className="space-y-4">
+          <ul className="space-y-6">
             {animais.map((animal) => (
               <li
                 key={animal.id}
-                className="border-b py-2 flex items-center justify-between"
+                className="py-6 px-6 bg-white shadow-lg rounded-xl hover:shadow-2xl transition-all duration-300 ease-in-out"
               >
-                <div>
-                  <strong>{animal.nome}</strong> ({animal.especie} -{" "}
-                  {animal.raca}) | Idade: {animal.idade} anos
-                </div>
-                <div className="flex space-x-2">
-                  <Link
-                    to={`/editar-animal/${animal.id}`}
-                    className="text-blue-500 hover:text-blue-700 transition duration-200"
-                  >
-                    Editar
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(animal.id)}
-                    className="text-red-500 hover:text-red-700 transition duration-200"
-                  >
-                    Excluir
-                  </button>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <strong className="text-xl font-bold text-gray-800">
+                      {animal.nome}
+                    </strong>{" "}
+                    <span className="text-gray-600">
+                      ({animal.especie} - {animal.raca})
+                    </span>
+                    <p className="text-gray-500 mt-1">
+                      Idade: {animal.idade} anos
+                    </p>
+                  </div>
+                  <div className="flex space-x-4 items-center">
+                    <Link
+                      to={`/editar-animal/${animal.id}`}
+                      className="text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-lg p-2 transition duration-200"
+                    >
+                      <span className="font-semibold">Editar</span>
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(animal.id)}
+                      className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-lg p-2 transition duration-200"
+                    >
+                      <span className="font-semibold">Excluir</span>
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}
           </ul>
         )}
       </div>
-
       <Toast
         message={toastMessage}
         variant={toastVariant}
         onClose={() => setToastMessage(null)}
       />
-
       {isModalOpen && (
         <Modal
           message="Tem certeza que deseja excluir este animal?"

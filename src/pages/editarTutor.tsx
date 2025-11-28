@@ -19,31 +19,38 @@ export default function EditarPerfil() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTutorData = async () => {
-      setIsLoadingData(true);
-      try {
-        const response = await fetch(`/api/tutor?id=${id}`);
-        const data = await response.json();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else {
+      const fetchTutorData = async () => {
+        setIsLoadingData(true);
+        try {
+          const response = await fetch(`/api/tutor?id=${id}`);
+          const data = await response.json();
 
-        if (response.ok) {
-          setNome(data.nome);
-          setEmail(data.email);
-          setTelefone(data.telefone);
-        } else {
-          setToastMessage(data.error || "Erro ao carregar os dados do tutor.");
+          if (response.ok) {
+            setNome(data.nome);
+            setEmail(data.email);
+            setTelefone(data.telefone);
+          } else {
+            setToastMessage(
+              data.error || "Erro ao carregar os dados do tutor."
+            );
+            setToastVariant("error");
+          }
+        } catch (err) {
+          console.error("Erro ao buscar dados:", err);
+          setToastMessage("Erro ao carregar os dados. Tente novamente.");
           setToastVariant("error");
+        } finally {
+          setIsLoadingData(false);
         }
-      } catch (err) {
-        console.error("Erro ao buscar dados:", err);
-        setToastMessage("Erro ao carregar os dados. Tente novamente.");
-        setToastVariant("error");
-      } finally {
-        setIsLoadingData(false);
-      }
-    };
+      };
 
-    fetchTutorData();
-  }, [id]);
+      fetchTutorData();
+    }
+  }, [id, navigate]);
 
   const handleSalvar = async (e: React.FormEvent) => {
     e.preventDefault();

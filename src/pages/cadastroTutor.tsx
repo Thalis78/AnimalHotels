@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Toast } from "../ui/toast";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -14,6 +14,12 @@ export default function CadastroTutor() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/animais");
+    }
+  }, [navigate]);
 
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +73,7 @@ export default function CadastroTutor() {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               required
+              placeholder="Digite o nome completo"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -84,6 +91,7 @@ export default function CadastroTutor() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              placeholder="Digite seu email"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -101,6 +109,7 @@ export default function CadastroTutor() {
               value={telefone}
               onChange={(e) => setTelefone(e.target.value)}
               required
+              placeholder="Digite seu telefone"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -118,6 +127,7 @@ export default function CadastroTutor() {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
+              placeholder="Escolha uma senha"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
